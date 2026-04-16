@@ -25,6 +25,15 @@ def webhook():
 def health():
     return f"OK DB_URL={'SET' if DB_URL else 'MISSING'} SECRET={'SET' if DB_SECRET else 'MISSING'}", 200
 
+@app.route("/test_write", methods=["GET"])
+def test_write():
+    url = f"{DB_URL}/last_reply.json?auth={DB_SECRET}"
+    try:
+        r = requests.put(url, json="RENDER_TEST")
+        return f"PUT {r.status_code}: {r.text}", 200
+    except Exception as e:
+        return f"ERROR: {e}", 500
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
